@@ -45,7 +45,7 @@
         const href = mobile && p.deep ? p.deep(location.href) : p.url;
         return `<a href="${href}" target="_blank" rel="noopener">${ic}${p.name}<small class="off">${mobile && p.deep ? 'open in app' : 'install'} ↗</small></a>`;
       };
-      sheet('connect a wallet', `<div class="wlist">${PROVS.map(row).join('')}</div><p class="note">You sign everything in your own wallet. life never holds a key.</p>`);
+      sheet('connect a wallet', `<div class="wlist">${PROVS.map(row).join('')}</div>`);
       $$('#sheetBody [data-p]').forEach(b => b.addEventListener('click', async () => {
         const p = PROVS.find(x => x.id === b.dataset.p), pr = p.get();
         try { const r = await pr.connect(); const pk = (r && r.publicKey) || pr.publicKey; if (!pk) throw 0; setMe(pk.toString(), pr, p.id); closeSheet.after = null; closeSheet(); res(true); }

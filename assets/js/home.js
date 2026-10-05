@@ -117,11 +117,13 @@
     const lastBy = new Map(); (j.notes || []).forEach(n => { if (!lastBy.has(n.mint)) lastBy.set(n.mint, n.text); });
     const ks = j.coins.slice().sort((a, b) => ST.sort === 'new' ? b.slot - a.slot : ST.sort === 'big' ? (b.mcap_sol || 0) - (a.mcap_sol || 0)
       : (RANK[a.state] - RANK[b.state]) || (new Date(b.last_trade_at || 0) - new Date(a.last_trade_at || 0)));
-    el.innerHTML = `<div class="dish">${ks.map(k => `<a class="cell" href="/c/${k.mint}" data-m="${k.mint}"><canvas data-seed="${esc(k.seed)}" data-st="${k.state}"></canvas>
+    const first = !ST.dishShown; ST.dishShown = true;
+    el.innerHTML = `<div class="dish${first ? ' stg' : ''}">${ks.map(k => `<a class="cell" href="/c/${k.mint}" data-m="${k.mint}"><canvas data-seed="${esc(k.seed)}" data-st="${k.state}"></canvas>
       <div class="nm">${esc(k.name)}</div><div class="tk"><span>$${esc(k.symbol)}</span><span class="pill st-${k.state}"><i></i>${k.state}</span></div>
       <div class="ln">${esc(lastBy.get(k.mint) || k.line || '')}</div>
       <div class="ft"><span>mcap <b>${usdOf(k, j)}</b></span><span>${k.born_at ? C.ago(new Date(k.born_at)) : '—'}</span></div></a>`).join('')}</div>`;
     $$('.cell', el).forEach(c => { ST.cells.set(c.dataset.m, c); paintLater(c.querySelector('canvas')); });
+    if (first) C.reveal(el);
     Live.watch(ks.filter(k => k.state !== 'ascended').map(k => k.mint));
   }
   $$('#sorts button').forEach(b => b.addEventListener('click', () => { ST.sort = b.dataset.s; $$('#sorts button').forEach(x => x.classList.toggle('on', x === b)); dish(); }));
